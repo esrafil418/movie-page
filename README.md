@@ -46,10 +46,11 @@ A modern **React 19 + TypeScript** application using **TailwindCSS**, **DaisyUI*
 ---
 
 ## Installation
+```bash
 
 ### 1. Create Vite React + TypeScript project
 
-```bash
+
 npm create vite@latest
 
 
