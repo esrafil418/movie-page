@@ -1,6 +1,6 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import { fetchPopularMovies } from "../../services/tmdb";
+import { fetchPopularMovies } from "../../api/movies";
 import type { PopularMoviesResponse, MovieSummary } from "../../types/tmdb";
 import type { Movie } from "../../types/movie";
 import MovieList from "../../components/MovieList";

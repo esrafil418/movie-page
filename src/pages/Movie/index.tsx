@@ -1,3 +1,5 @@
+import { fetchMovieDetails } from "../../api/movies";
+
 const Movie: React.FC = () => {
   return <div>Movie Page</div>;
 };
