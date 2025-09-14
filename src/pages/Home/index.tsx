@@ -3,22 +3,30 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchPopularMovies } from "../../api/movies";
 import type { PopularMoviesResponse, MovieSummary } from "../../types/tmdb";
 import type { Movie } from "../../types/movie";
-import MovieList from "../../components/MovieList";
+// src/components/ErrorMessage.tsx
+import ErrorMessage from "../../components/ErrorMessage";
 
 // Home page component
 const Home: React.FC = () => {
   // useQuery hook for popular movies
-  const { data, isLoading, isError } = useQuery<PopularMoviesResponse>({
-    queryKey: ["popularMovies"],
-    queryFn: () => fetchPopularMovies(1), // page = 1
-  });
+  const { data, isLoading, isError, refetch } = useQuery<PopularMoviesResponse>(
+    {
+      queryKey: ["popularMovies"],
+      queryFn: () => fetchPopularMovies(1), // page = 1
+    }
+  );
 
   // Loading state
   if (isLoading) return <p className="text-center mt-10">Loading...</p>;
 
   // Error state
   if (isError)
-    return <p className="text-center mt-10">Error fetching movies.</p>;
+    return (
+      <ErrorMessage
+        message="Error fetching movies."
+        onRetry={() => refetch()}
+      />
+    );
 
   // Convert API data to Movie type
   const moviesForList: Movie[] =
