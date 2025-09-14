@@ -2,6 +2,8 @@ import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchPopularMovies } from "../../services/tmdb";
 import type { PopularMoviesResponse, MovieSummary } from "../../types/tmdb";
+import type { Movie } from "../../types/movie";
+import MovieList from "../../components/MovieList";
 
 // Home page component
 const Home: React.FC = () => {
@@ -12,41 +14,32 @@ const Home: React.FC = () => {
   });
 
   // Loading state
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <p className="text-center mt-10">Loading...</p>;
 
   // Error state
-  if (isError) return <p>Error fetching movies.</p>;
+  if (isError)
+    return <p className="text-center mt-10">Error fetching movies.</p>;
+
+  // Convert API data to Movie type
+  const moviesForList: Movie[] =
+    data?.results.map((m: MovieSummary) => ({
+      id: m.id,
+      title: m.title ?? "Untitled",
+      year: m.release_date ? Number(m.release_date.split("-")[0]) : 0,
+      genre: "N/A", // can be updated later
+      thumbnail: m.poster_path
+        ? `https://image.tmdb.org/t/p/w500${m.poster_path}`
+        : "",
+    })) ?? [];
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Popular Movies</h1>
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        {data?.results.map((movie: MovieSummary) => (
-          <div key={movie.id} className="bg-base-200 rounded p-2">
-            {/* Poster */}
-            {movie.poster_path ? (
-              <img
-                src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                alt={movie.title}
-                className="rounded mb-2"
-              />
-            ) : (
-              <div className="bg-gray-300 h-64 flex items-center justify-center">
-                No Image
-              </div>
-            )}
+    <div className="p-4 max-w-[1400px] mx-auto">
+      {/* Page title */}
+      <h1 className="text-3xl font-bold mb-6 text-center">Popular Movies</h1>
 
-            {/* Title */}
-            <h2 className="text-sm font-semibold">
-              {movie.title || "Untitled"}
-            </h2>
-
-            {/* Rating */}
-            <p className="text-xs text-gray-500">
-              ⭐ {movie.vote_average?.toFixed(1) ?? "N/A"}
-            </p>
-          </div>
-        ))}
+      {/* Movie list */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+        <MovieList movies={moviesForList} loading={isLoading} />
       </div>
     </div>
   );
