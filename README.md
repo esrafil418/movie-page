@@ -45,37 +45,12 @@ A modern **React 19 + TypeScript** application using **TailwindCSS**, **DaisyUI*
 
 ---
 
-## Project Structure
-
-src/
-│
-├── assets/ # Images, icons, and other static assets
-├── components/ # Reusable UI components
-│ ├── MovieCard.tsx
-│ ├── TvShowCard.tsx
-│ └── ...
-├── pages/ # Main pages of the app
-│ ├── Home/
-│ │ └── index.tsx
-│ ├── Movie/
-│ ├── TvShow/
-│ ├── Rated/
-│ └── Auth/
-├── services/ # API calls (TMDB service)
-│ └── tmdb.ts
-├── store/ # Zustand or Redux store (state management)
-├── types/ # TypeScript types
-│ └── tmdb.d.ts
-├── App.tsx # Main router & app layout
-└── main.tsx # Entry point
-
----
-
 ## Installation
+```bash
 
 ### 1. Create Vite React + TypeScript project
 
-```bash
+
 npm create vite@latest
 
 
