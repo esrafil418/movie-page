@@ -1,72 +1,58 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { fetchMovieDetails } from "../../api/movies";
-import type { MovieDetails } from "../../types/tmdb";
+import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
+import { createMovieResource } from "./movieResource";
+import type { SimpleMovie } from "./movieResource";
 
-const Movie: React.FC = () => {
-  // گرفتن movieId از URL
-  const { movieId } = useParams<{ movieId: string }>();
-
-  // استفاده از useQuery برای fetch جزئیات فیلم
-  const { data, isLoading, isError } = useQuery<MovieDetails>({
-    queryKey: ["movieDetails", movieId],
-    queryFn: () => fetchMovieDetails(movieId!),
-    enabled: !!movieId, // اجرای query فقط وقتی movieId موجوده
-  });
-
-  // Loading state
-  if (isLoading)
-    return <p className="text-center mt-10 text-gray-400">Loading movie...</p>;
-
-  // Error state
-  if (isError)
-    return (
-      <p className="text-center mt-10 text-red-500">
-        Failed to load movie details.
-      </p>
-    );
-
-  if (!data) return null; // امنیتی، وقتی data undefined باشه
+const MovieDetailContent: React.FC<{
+  resource: ReturnType<typeof createMovieResource>;
+}> = ({ resource }) => {
+  const movie: SimpleMovie = resource.read();
 
   return (
-    <div className="p-4 max-w-[1200px] mx-auto">
-      <div className="flex flex-col md:flex-row gap-6">
-        {/* Poster */}
-        <div className="flex-shrink-0">
-          {data.poster_path ? (
-            <img
-              src={`https://image.tmdb.org/t/p/w500${data.poster_path}`}
-              alt={data.title}
-              className="rounded-lg shadow-lg w-full md:w-64"
-            />
-          ) : (
-            <div className="bg-gray-300 w-full md:w-64 h-96 flex items-center justify-center rounded-lg">
-              No Image
-            </div>
-          )}
-        </div>
+    <div className="bg-gray-900 min-h-screen relative text-white">
+      <Navbar />
 
-        {/* Details */}
-        <div className="flex-1">
-          <h1 className="text-3xl font-bold mb-2">{data.title}</h1>
-          <p className="text-gray-500 mb-2">
-            {data.release_date
-              ? new Date(data.release_date).getFullYear()
-              : "N/A"}{" "}
-            • {data.runtime ? `${data.runtime} min` : "N/A"}
+      {/* --- Blurred background as main hero section --- */}
+      <div className="relative h-[80vh] flex items-center justify-center text-center">
+        {/* Blurred poster background */}
+        <img
+          src={movie.poster}
+          alt={movie.title}
+          className="absolute inset-0 w-full h-full object-cover blur-2xl z-0"
+        />
+        {/* Dark overlay for contrast */}
+        <div className="absolute inset-0 bg-black/70 z-10" />
+
+        {/* Foreground text */}
+        <div className="relative z-20 max-w-3xl mx-auto px-4">
+          <h1 className="text-4xl md:text-6xl font-bold">{movie.title}</h1>
+          <p className="mt-3 text-lg text-gray-200">
+            {movie.genre} • {movie.year}
           </p>
-          <p className="mb-4 text-gray-600">
-            Genres:{" "}
-            {data.genres.length > 0
-              ? data.genres.map((g) => g.name).join(", ")
-              : "N/A"}
-          </p>
-          <p className="text-gray-700">{data.overview || "No description."}</p>
+          <p className="mt-6 text-gray-100 leading-7">{movie.description}</p>
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 };
 
-export default Movie;
+const MovieDetail: React.FC = () => {
+  const { movieId = "0" } = useParams<{ movieId: string }>();
+  const resource = createMovieResource(movieId);
+
+  return (
+    <Suspense
+      fallback={
+        <p className="text-white text-center mt-10">Loading movie...</p>
+      }
+    >
+      <MovieDetailContent resource={resource} />
+    </Suspense>
+  );
+};
+
+export default MovieDetail;

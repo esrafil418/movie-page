@@ -44,6 +44,14 @@ export interface MovieDetails {
   release_date?: string;
   runtime?: number;
   genres: { id: number; name: string }[];
+  vote_average?: number;
+  adult?: boolean;
+  budget?: number;
+  imdb_id?: string;
+  popularity?: number;
+  production_companies?: { id: number; name: string; logo_path?: string }[];
+  revenue?: number;
+  original_language?: string;
 }
 
 //! TV show details response (simplified)
