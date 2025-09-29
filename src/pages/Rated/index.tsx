@@ -5,12 +5,16 @@ import { fetchRatedMovies } from "../../api/movies"; // مسیر api جدید
 import type { RatedMoviesResponse, Movie } from "../../types/movie";
 import MovieList from "../../components/MovieList";
 import ErrorMessage from "../../components/ErrorMessage";
+import { Navigate } from "react-router-dom";
 
 interface RatedProps {
-  guestSessionId: string;
+  guestSessionId?: string;
 }
 
 const Rated: React.FC<RatedProps> = ({ guestSessionId }) => {
+  // Prefer prop when provided, otherwise read from localStorage (safe for client-side rendering)
+  const guestSession =
+    guestSessionId ?? localStorage.getItem("guest_session_id");
   const [currentPage, setCurrentPage] = useState(1);
 
   // UseQuery
@@ -18,13 +22,19 @@ const Rated: React.FC<RatedProps> = ({ guestSessionId }) => {
     RatedMoviesResponse,
     Error
   >({
-    queryKey: ["ratedMovies", guestSessionId, currentPage],
+    queryKey: ["ratedMovies", guestSession, currentPage],
     queryFn: () =>
       fetchRatedMovies(
-        guestSessionId,
+        guestSession as string,
         currentPage
       ) as Promise<RatedMoviesResponse>,
+    enabled: !!guestSession,
   });
+
+  // If no guest session exists, redirect to auth
+  if (!guestSession) {
+    return <Navigate to="/auth" />;
+  }
 
   if (isLoading) return <p className="text-center mt-10">Loading...</p>;
   if (isError)
