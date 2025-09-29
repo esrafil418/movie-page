@@ -1,4 +1,4 @@
-import { BASE_URL, TOKEN } from "./config";
+import { BASE_URL, TOKEN, API_KEY } from "./config";
 import type { PopularMoviesResponse, MovieDetails } from "../types/tmdb";
 import type { RatedMoviesResponse } from "../types/movie";
 
@@ -35,7 +35,7 @@ export const fetchRatedMovies = async (
   page = 1
 ): Promise<RatedMoviesResponse> => {
   const res = await fetch(
-    `https://api.themoviedb.org/3/guest_session/${guestSessionId}/rated/movies?api_key=${import.meta.env.VITE_API_KEY}&language=en-US&page=${page}&sort_by=created_at.asc`
+    `https://api.themoviedb.org/3/guest_session/${guestSessionId}/rated/movies?api_key=${API_KEY}&language=en-US&page=${page}&sort_by=created_at.asc`
   );
   if (!res.ok) throw new Error("Failed to fetch rated movies");
 

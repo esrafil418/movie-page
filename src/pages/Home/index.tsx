@@ -5,6 +5,7 @@ import type { PopularMoviesResponse, MovieSummary } from "../../types/tmdb";
 import type { Movie } from "../../types/movie";
 // src/components/ErrorMessage.tsx
 import ErrorMessage from "../../components/ErrorMessage";
+import MovieList from "../../components/MovieList";
 
 // Home page component
 const Home: React.FC = () => {
