@@ -1,2 +1,2 @@
 developing with TMDB api...
-https://movie-rate-project.netlify.app/
+https://movie-rating-page.netlify.app/
